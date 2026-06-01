@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  full_name   String
+  email       String   @unique
+  phone       String   @unique
+  password    String
+  role        String   // customer, buter, admin
+  is_verified Boolean  @default(false)
+  created_at  DateTime @default(now())
+
+  buter_detail  ButerDetail?
+  tasks_created Task[]        @relation("CustomerTasks")
+  tasks_assigned Task[]       @relation("ButerTasks")
+  wallet        Wallet?
+  withdrawals   Withdrawal[]
+  disputes      Dispute[]
+  notifications Notification[]
+}
+
+model ButerDetail {
+  id                    Int    @id @default(autoincrement())
+  userId                Int    @unique
+  user                  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle_type          String
+  id_card_photo         String
+  skck_photo            String
+  selfie_photo          String
+  approval_status       String @default("pending") // pending, approved, rejected
+  total_earnings        Float  @default(0)
+  total_tasks_completed Int    @default(0)
+  notes                 String?
+}
+
+model Task {
+  id               Int       @id @default(autoincrement())
+  customer_id      Int
+  customer         User      @relation("CustomerTasks", fields: [customer_id], references: [id])
+  buter_id         Int?
+  buter            User?     @relation("ButerTasks", fields: [buter_id], references: [id])
+  description      String
+  pickup_location  String
+  dropoff_location String
+  price            Float
+  status           String    @default("waiting") // waiting, taken, on_progress, completed, dispute, cancelled
+  payment_method   String    // gopay, qris, bank_transfer, dana
+  payment_status   String    @default("pending") // pending, paid, refunded
+  payment_amount   Float
+  transaction_id   String?
+  paid_at          DateTime?
+  created_at       DateTime  @default(now())
+  taken_at         DateTime?
+  started_at       DateTime?
+  completed_at     DateTime?
+  cancelled_at     DateTime?
+  cancel_reason    String?
+
+  review           Review?
+  tracking_history TrackingPoint[]
+  disputes         Dispute[]
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  taskId     Int      @unique
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  rating     Int
+  comment    String?
+  created_at DateTime @default(now())
+}
+
+model TrackingPoint {
+  id     Int      @id @default(autoincrement())
+  taskId Int
+  task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  lat    Float
+  lng    Float
+  status String
+  time   DateTime @default(now())
+}
+
+model Wallet {
+  id              Int           @id @default(autoincrement())
+  buter_id        Int           @unique
+  buter           User          @relation(fields: [buter_id], references: [id], onDelete: Cascade)
+  balance         Float         @default(0)
+  pending_balance Float         @default(0)
+  transactions    Transaction[]
+}
+
+model Transaction {
+  id       Int      @id @default(autoincrement())
+  walletId Int
+  wallet   Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type     String   // earning, withdrawal, refund
+  amount   Float
+  task_id  Int?
+  date     DateTime @default(now())
+}
+
+model Withdrawal {
+  id           Int       @id @default(autoincrement())
+  buter_id     Int
+  buter        User      @relation(fields: [buter_id], references: [id], onDelete: Cascade)
+  amount       Float
+  bank_account String
+  bank_name    String
+  status       String    @default("pending") // pending, processed, rejected
+  requested_at DateTime  @default(now())
+  processed_at DateTime?
+  notes        String?
+}
+
+model Dispute {
+  id           Int           @id @default(autoincrement())
+  task_id      Int
+  task         Task          @relation(fields: [task_id], references: [id])
+  reported_by  Int
+  reporter     User          @relation(fields: [reported_by], references: [id])
+  reason       String
+  evidence     String?
+  status       String        @default("open") // open, investigating, resolved, closed
+  resolution   String?
+  created_at   DateTime      @default(now())
+  chat_history DisputeChat[]
+}
+
+model DisputeChat {
+  id        Int      @id @default(autoincrement())
+  disputeId Int
+  dispute   Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  sender    String   // customer, buter, admin
+  message   String
+  time      DateTime @default(now())
+}
+
+model Notification {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String   // task_completed, etc.
+  title           String
+  message         String
+  related_task_id Int?
+  is_read         Boolean  @default(false)
+  created_at      DateTime @default(now())
+}
