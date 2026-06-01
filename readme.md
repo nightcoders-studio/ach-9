@@ -87,4 +87,3 @@ Skema lengkap ada di `prisma/schema.prisma`. Berikut ringkasannya:
 * **Bid:** Penawaran harga (`price`, `message`, `status`) dari user ke task tertentu.
 * **TaskAssignment:** Mencatat siapa pekerja yang memenangkan tugas tertentu.
 
-*(Tabel lain seperti Chat, Review, Verification ada di skema tetapi tidak digunakan dalam logika MVP ini).*
