@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "../../../utils/supabase/client";
 
 interface ProfilUser {
@@ -13,12 +14,21 @@ interface ProfilUser {
 }
 
 export default function DaftarPenggunaAdminPage() {
+  const router = useRouter();
   const supabase = createClient();
   const [daftarUser, setDaftarUser] = useState<ProfilUser[]>([]);
   const [memuat, setMemuat] = useState(true);
 
   useEffect(() => {
     async function ambilSemuaUser() {
+      // Cek email pengguna yang sedang login
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user || user.email?.toLowerCase() !== "nandahax@gmail.com") {
+        router.push("/");
+        return;
+      }
+
       // Mengambil seluruh data pengguna dari tabel profiles
       const { data, error } = await supabase
         .from("profiles")
@@ -32,7 +42,7 @@ export default function DaftarPenggunaAdminPage() {
     }
 
     ambilSemuaUser();
-  }, [supabase]);
+  }, [supabase, router]);
 
   if (memuat) return <div className="p-8 text-white">Memuat daftar pengguna...</div>;
 

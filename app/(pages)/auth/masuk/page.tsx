@@ -20,7 +20,7 @@ export default function MasukPage() {
     e.preventDefault();
     setMemuat(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
       email: surel,
       password: kataSandi,
     });
@@ -29,8 +29,14 @@ export default function MasukPage() {
       alert(`Gagal masuk: ${error.message}`);
       setMemuat(false);
     } else {
-      // Redirect ke dashboard atau halaman belajar setelah sukses
-      router.push("/belajar");
+      // Cek email untuk redirect berbasis admin
+      const email = data.user?.email?.toLowerCase();
+
+      if (email === "nandahax@gmail.com") {
+        router.push("/admin");
+      } else {
+        router.push("/belajar");
+      }
     }
   };
 
