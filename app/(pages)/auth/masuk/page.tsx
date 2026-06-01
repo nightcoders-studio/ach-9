@@ -50,7 +50,7 @@ export default function MasukPage() {
 
         <div className="relative z-10 space-y-6">
           <blockquote className="text-3xl font-light leading-relaxed italic">
-            "Peugah haba ngon budi basa, peumulia bansa ngon bhah bahasa."
+wawqwaw 
           </blockquote>
           <div>
             <p className="font-semibold text-lg text-emerald-200">Latihan UKBI Nyata & Kontekstual</p>

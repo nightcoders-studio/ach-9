@@ -12,7 +12,6 @@ export default function DaftarPage() {
   const [namaLengkap, setNamaLengkap] = useState("");
   const [surel, setSurel] = useState("");
   const [kataSandi, setKataSandi] = useState("");
-  const [peran, setPeran] = useState("Pelajar"); // Default peran sesuai check constraint DB
   const [memuat, setMemuat] = useState(false);
   const [pesanEror, setPesanEror] = useState("");
 
@@ -21,14 +20,14 @@ export default function DaftarPage() {
     setMemuat(true);
     setPesanEror("");
 
-    // Registrasi ke Supabase Auth dengan membawa metadata profil
+    // Registrasi ke Supabase Auth dengan membawa metadata profil baru
     const { error } = await supabase.auth.signUp({
       email: surel,
       password: kataSandi,
       options: {
         data: {
           nama_lengkap: namaLengkap,
-          peran: peran,
+          peran: "User", // Menjamin nilai sesuai dengan CHECK constraint (User/Admin)
         },
       },
     });
@@ -37,8 +36,7 @@ export default function DaftarPage() {
       setPesanEror(error.message);
       setMemuat(false);
     } else {
-      // Jika berhasil, arahkan ke halaman belajar atau beri notifikasi cek email
-      alert("Pendaftaran berhasil! Silakan periksa kotak masuk email Anda jika konfirmasi diaktifkan.");
+      alert("Pendaftaran berhasil! Silakan masuk menggunakan akun baru Anda.");
       router.push("/auth/masuk");
     }
   };
@@ -46,25 +44,25 @@ export default function DaftarPage() {
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 dark:bg-slate-900 font-sans">
       
-      {/* Sisi Kiri: Panel Ilustrasi & Branding (Tersembunyi di Mobile) */}
+      {/* Sisi Kiri: Panel Ilustrasi & Branding */}
       <div className="hidden lg:flex lg:col-span-5 bg-gradient-to-br from-teal-700 to-emerald-900 p-12 flex-col justify-between text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
         <div className="relative z-10">
           <div className="flex items-center gap-2 font-bold text-2xl tracking-wide">
-            <span className="bg-white text-teal-700 px-3 py-1 rounded-xl shadow-md">Tutur</span>
-            
+            <span className="bg-white text-teal-700 px-3 py-1 rounded-xl shadow-md">UKBI</span>
+            <span>Garuda</span>
           </div>
         </div>
 
         <div className="relative z-10 space-y-6">
           <blockquote className="text-3xl font-light leading-relaxed italic">
-            "Tajak u sikula beu thalee, tajak u gampong beu tatee."
+            "Peugah haba ngon budi basa, peumulia bansa ngon bhah bahasa."
           </blockquote>
           <div>
             <p className="font-semibold text-lg text-teal-200">Mulailah Perjalanan Literasimu</p>
             <p className="text-sm text-teal-100/80 mt-1">
-              Dapatkan akses ke simulasi interaktif, materi adaptif berbasis kebudayaan Aceh, dan komunitas belajar penutur kreatif.
+              Dapatkan akses ke simulasi interaktif paket resmi, materi adaptif kebahasaan, dan komunitas belajar terbesar di Aceh.
             </p>
           </div>
         </div>
@@ -84,7 +82,7 @@ export default function DaftarPage() {
               Buat Akun Baru
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Isi data di bawah ini untuk memulai langkah pembelajaran freemium Anda.
+              Isi data di bawah ini untuk memulai langkah pembelajaran gratis Anda.
             </p>
           </div>
 
@@ -128,39 +126,6 @@ export default function DaftarPage() {
                 onChange={(e) => setSurel(e.target.value)}
                 className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
               />
-            </div>
-
-            {/* Input Pilihan Peran (Onboarding Role) */}
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                Pilih Peran Utama Belajar
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setPeran("Pelajar")}
-                  className={`p-3 rounded-xl border text-center transition-all ${
-                    peran === "Pelajar"
-                      ? "border-teal-600 bg-teal-50 text-teal-700 font-semibold dark:bg-teal-950/40 dark:text-teal-400"
-                      : "border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                  }`}
-                >
-                  <p className="text-sm">Pelajar Lokal</p>
-                  <p className="text-[10px] opacity-70 font-normal mt-0.5">UKBI, CPNS, Mahasiswa</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPeran("BIPA")}
-                  className={`p-3 rounded-xl border text-center transition-all ${
-                    peran === "BIPA"
-                      ? "border-teal-600 bg-teal-50 text-teal-700 font-semibold dark:bg-teal-950/40 dark:text-teal-400"
-                      : "border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                  }`}
-                >
-                  <p className="text-sm">BIPA Learner</p>
-                  <p className="text-[10px] opacity-70 font-normal mt-0.5">WNA, Wisatawan Asing</p>
-                </button>
-              </div>
             </div>
 
             {/* Input Kata Sandi */}
@@ -214,5 +179,5 @@ export default function DaftarPage() {
         </div>
       </div>
     </div>
-  );
+  ); 
 }

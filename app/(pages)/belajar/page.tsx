@@ -125,7 +125,7 @@ export default function BelajarDashboard() {
               Uji kemampuan bahasamu dengan standar resmi. Dapatkan analisis langsung berbasis AI.
             </p>
             <div className="space-y-3">
-              <Link href="/simulasi" className="block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
+              <Link href="/section" className="block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
                 Mulai Simulasi
               </Link>
             </div>
